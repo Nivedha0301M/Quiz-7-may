@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Bank Exam Quiz</title>
+
+<style>
+
+body{
+    font-family: Arial, sans-serif;
+    background:#f4f6f9;
+    margin:0;
+    padding:20px;
+}
+
+.container{
+    max-width:1000px;
+    margin:auto;
+}
+
+h1{
+    text-align:center;
+}
+
+#timer{
+    position:sticky;
+    top:0;
+    background:#222;
+    color:white;
+    padding:15px;
+    text-align:center;
+    font-size:22px;
+    border-radius:10px;
+    margin-bottom:20px;
+    z-index:100;
+}
+
+.question{
+    background:white;
+    padding:20px;
+    margin-bottom:20px;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
+.question h3{
+    margin-bottom:15px;
+}
+
+.option{
+    display:block;
+    padding:12px;
+    margin:10px 0;
+    border:1px solid #ccc;
+    border-radius:8px;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.option:hover{
+    background:#f0f0f0;
+}
+
+.selected{
+    background:#cfe2ff;
+    border:2px solid #0d6efd;
+}
+
+.mark-btn{
+    margin-top:10px;
+    padding:8px 15px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    background:#ff9800;
+    color:white;
+}
+
+.marked{
+    background:#ffcc80 !important;
+}
+
+.submit-btn{
+    width:100%;
+    padding:15px;
+    font-size:20px;
+    border:none;
+    border-radius:10px;
+    background:#28a745;
+    color:white;
+    cursor:pointer;
+    margin-top:20px;
+}
+
+.submit-btn:hover{
+    background:#218838;
+}
+
+.result-box{
+    background:white;
+    padding:30px;
+    border-radius:12px;
+    text-align:center;
+    box-shadow:0 2px 10px rgba(0,0,0,0.1);
+}
+
+.review-btn{
+    padding:12px 20px;
+    margin-top:20px;
+    border:none;
+    border-radius:10px;
+    background:#007bff;
+    color:white;
+    font-size:18px;
+    cursor:pointer;
+}
+
+.review-question{
+    background:white;
+    padding:20px;
+    margin:20px 0;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
+.correct{
+    color:green;
+    font-weight:bold;
+}
+
+.wrong{
+    color:red;
+    font-weight:bold;
+}
+
+.unanswered{
+    color:orange;
+    font-weight:bold;
+}
+
+.correct-answer{
+    background:#d4edda;
+    padding:10px;
+    border-radius:8px;
+    margin-top:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Bank Exam MCQ Quiz</h1>
+
+<div id="timer">Time Left: 15:00</div>
+
+<div id="quiz"></div>
+
+<button class="submit-btn" onclick="submitQuiz()">
+Submit Quiz
+</button>
+
+</div>
+
+<script>
+
+// ===============================
+// QUESTIONS AREA
+// ===============================
+
+const questions = [
+
+{q:`The Union Cabinet approved two semiconductor manufacturing projects worth around Rs. 3,936 crore under which flagship mission aimed at developing India’s semiconductor and display ecosystem?`, options:["Digital India Mission (DIM)","India Semiconductor Mission (ISM)","National Electronics Policy (NEP)","Production Linked Incentive Scheme (PLI)"], answer:1},
+
+{q:`Crystal Matrix Limited (CML), approved under the India Semiconductor Mission (ISM), will establish its Mini/Micro-LED display manufacturing facility in which location of Gujarat (GJ)?`, options:["Surat","Vadodara","Dholera","Rajkot"], answer:2},
+
+{q:`The semiconductor packaging unit approved for Suchi Semicon Private Limited (SSPL) under ISM will be established in which city of Gujarat (GJ)?`, options:["Ahmedabad","Surat","Jamnagar","Bhavnagar"], answer:1},
+
+{q:`The India Semiconductor Mission (ISM), under which the new semiconductor units were approved, functions under which ministry?`, options:["Ministry of Commerce and Industry","Ministry of Electronics and Information Technology (MeitY)","Ministry of Science and Technology","Ministry of Heavy Industries"], answer:1},
+
+{q:`The Emergency Credit Line Guarantee Scheme (ECLGS) 5.0 approved by the Union Cabinet carries a total outlay of:`, options:["Rs. 10,800 crore","Rs. 15,000 crore","Rs. 18,100 crore","Rs. 21,500 crore"], answer:2},
+
+{q:`ECLGS 5.0 was primarily approved to help MSMEs facing liquidity stress arising due to which crisis?`, options:["European debt crisis","Indo-Pacific trade disruption","West Asia crisis","Global semiconductor shortage"], answer:2},
+
+{q:`Under ECLGS 5.0, what percentage of credit guarantee coverage is provided for MSMEs?`, options:["75%","80%","90%","100%"], answer:3},
+
+{q:`Which organization administers the Emergency Credit Line Guarantee Scheme (ECLGS) 5.0?`, options:["SIDBI","NABARD","National Credit Guarantee Trustee Company Limited (NCGTC)","EXIM Bank"], answer:2},
+
+{q:`National Credit Guarantee Trustee Company Limited (NCGTC), associated with ECLGS implementation, was established in which year?`, options:["2010","2012","2014","2016"], answer:2},
+
+{q:`The headquarters of National Credit Guarantee Trustee Company Limited (NCGTC) is located in:`, options:["New Delhi","Mumbai","Bengaluru","Hyderabad"], answer:1},
+
+{q:`Cabinet Committee on Economic Affairs (CCEA) approved a major ship repair facility project worth Rs. 1,570 crore at Vadinar in Gujarat (GJ) in partnership with which organizations?`, options:["SCI and HAL","DPA and CSL","BEL and DRDO","GAIL and ONGC"], answer:1},
+
+{q:`Deendayal Port Authority (DPA), associated with the Vadinar ship repair project, is located in which major port city of Gujarat?`, options:["Mundra","Porbandar","Kandla","Jamnagar"], answer:2},
+
+{q:`Cochin Shipyard Limited (CSL), involved in the Vadinar ship repair project, has its headquarters in which city?`, options:["Visakhapatnam","Kochi","Chennai","Mangaluru"], answer:1},
+
+{q:`The Cabinet Committee on Economic Affairs (CCEA) approved railway multi-tracking projects worth approximately:`, options:["Rs. 12,000 crore","Rs. 18,750 crore","Rs. 23,437 crore","Rs. 30,500 crore"], answer:2},
+
+{q:`Which among the following railway routes was included in the CCEA-approved railway multi-tracking projects?`, options:["Chennai–Bengaluru","Nagda–Mathura","Mumbai–Pune","Delhi–Amritsar"], answer:1},
+
+{q:`The Union Government approved an increase in the sanctioned strength of judges in the Supreme Court of India (SCI) from 33 to:`, options:["35","36","37","40"], answer:2},
+
+{q:`The headquarters of the Supreme Court of India (SCI) is located in:`, options:["Mumbai","New Delhi","Prayagraj","Chandigarh"], answer:1},
+
+{q:`As per the Ministry of Finance (MoF), Scheduled Commercial Banks (SCBs) recorded what percentage of year-on-year growth in non-food credit during FY26?`, options:["10.4%","12.8%","15.9%","19.0%"], answer:2},
+
+{q:`According to MoF data on Scheduled Commercial Banks (SCBs), which sector recorded the highest credit growth during FY26?`, options:["Agriculture and Allied Activities","Industrial Sector","Services Sector","Infrastructure Sector"], answer:2},
+
+{q:`The Ministry of Defence (MoD) signed a Rs. 1,476 crore contract with Bharat Electronics Limited (BEL) for procurement of which system for the Indian Army (IA)?`, options:["Missile radar units","Ground-Based Mobile Electronic Systems (GBMES)","Naval surveillance drones","Electronic warfare satellites"], answer:1},
+
+{q:`The contract between MoD and BEL for Ground-Based Mobile Electronic Systems (GBMES) was signed under which procurement category?`, options:["Buy Global","Buy and Make","Buy Indian–IDDM","Strategic Partnership Model"], answer:2},
+
+{q:`Defence Electronics Research Laboratory (DLRL), involved in the GBMES project, functions under which organization?`, options:["ISRO","HAL","DRDO","BEL"], answer:2},
+
+{q:`Bharat Electronics Limited (BEL), which signed the MoD contract, has its headquarters in:`, options:["Hyderabad","Bengaluru","Pune","Chennai"], answer:1},
+
+{q:`NITI Aayog launched which portal to improve real-time governance and strengthen last-mile service delivery?`, options:["Digital Governance Portal (DGP)","Central Prabhari Officer (CPO) Portal","Bharat Service Portal (BSP)","Real-Time Monitoring Dashboard (RTMD)"], answer:1},
+
+{q:`The Central Prabhari Officer (CPO) Portal launched by NITI Aayog allows officers to upload real-time field observations mainly through:`, options:["Satellite terminals","Mobile devices","Email reporting systems","Central data centres"], answer:1},
+
+{q:`NITI Aayog, which launched the CPO Portal, replaced which former institution?`, options:["Finance Commission","National Development Council","Planning Commission","Administrative Reforms Commission"], answer:2},
+
+{q:`External Affairs Minister (EAM) Dr. S. Jaishankar undertook his first-ever bilateral visit to which Caribbean nation during May 2026?`, options:["Cuba","Jamaica","Barbados","Trinidad and Tobago"], answer:1},
+
+{q:`During EAM S. Jaishankar’s visit, India and Jamaica signed MoUs related to health cooperation, broadcasting, and:`, options:["Defence production","Space research","Solarisation of Hugh Lawson Shearer Building","Nuclear cooperation"], answer:2},
+
+{q:`The capital city of Jamaica, visited by EAM Dr. S. Jaishankar, is:`, options:["Nassau","Kingston","Georgetown","Havana"], answer:1},
+
+{q:`International Organization for Migration (IOM) released which edition of the “World Migration Report 2026”?`, options:["10th","11th","12th","13th"], answer:3},
+
+{q:`According to the World Migration Report 2026, India remained the world’s top remittance recipient country in 2024 with inflows exceeding:`, options:["USD 90 billion","USD 100 billion","USD 137 billion","USD 150 billion"], answer:2},
+
+{q:`The headquarters of the International Organization for Migration (IOM) is located in:`, options:["Vienna","Geneva","New York","Paris"], answer:1},
+
+{q:`Jio Payments Bank Limited (JPBL) partnered with which fintech platform as Business Correspondent (BC) to strengthen last-mile digital banking services?`, options:["PayNearby","BharatPe","Ezeepay","Razorpay"], answer:2},
+
+{q:`Jio Payments Bank Limited (JPBL), which partnered with Ezeepay, was established in which year?`, options:["2015","2016","2018","2020"], answer:2},
+
+{q:`International Day of the Midwife (IDM) is observed every year on which date to recognise the contribution of midwives in maternal and newborn healthcare?`, options:["1 May","3 May","5 May","7 May"], answer:2},
+
+{q:`The 2026 theme of International Day of the Midwife (IDM) was:`, options:["Safe Birth for All","Midwives for Future Health","One Million More Midwives","Care Beyond Borders"], answer:2},
+
+{q:`World Hand Hygiene Day (WHHD), observed under the leadership of WHO, carried which 2026 theme?`, options:["Hygiene for Humanity","Action saves lives– Safer care starts with clean hands","Healthy Hands, Healthy World","Prevention through Cleanliness"], answer:1},
+
+{q:`World Cartoonist Day commemorates the debut of which famous comic feature published on 5 May 1895?`, options:["Peanuts","Calvin and Hobbes","Hogan’s Alley","Tintin"], answer:2},
+
+{q:`Nagaland launched the ‘100 Days Ayushman Student Coverage Mission’ mainly to expand which scheme among students?`, options:["PM-KISAN","PMJDY","AB-PMJAY","PM SVANidhi"], answer:2},
+
+{q:`The ‘100 Days Ayushman Student Coverage Mission’, launched by Nagaland, has been described as the first student-centric health saturation drive in which region of India?`, options:["Northern Region","Western Region","North East Region","Central Region"], answer:2},
+];
+
+// ===============================
+// VARIABLES
+// ===============================
+
+let userAnswers = new Array(questions.length).fill(null);
+
+let markedForReview = new Array(questions.length).fill(false);
+
+let submitted = false;
+
+// ===============================
+// LOAD QUIZ
+// ===============================
+
+function loadQuiz(){
+
+    const quizDiv = document.getElementById("quiz");
+
+    questions.forEach((question,index)=>{
+
+        const qDiv = document.createElement("div");
+        qDiv.classList.add("question");
+
+        qDiv.innerHTML = `
+        <h3>Q${index+1}. ${question.q}</h3>
+        `;
+
+        question.options.forEach((option,optIndex)=>{
+
+            const opt = document.createElement("div");
+
+            opt.classList.add("option");
+
+            opt.innerText = option;
+
+            opt.onclick = ()=>selectOption(index,optIndex,opt);
+
+            opt.id = `q${index}_opt${optIndex}`;
+
+            qDiv.appendChild(opt);
+
+        });
+
+        // Mark For Review Button
+
+        const markBtn = document.createElement("button");
+
+        markBtn.innerText = "Mark For Review";
+
+        markBtn.classList.add("mark-btn");
+
+        markBtn.onclick = ()=>toggleMark(index,markBtn);
+
+        qDiv.appendChild(markBtn);
+
+        quizDiv.appendChild(qDiv);
+
+    });
+
+}
+
+// ===============================
+// SELECT OPTION
+// ===============================
+
+function selectOption(qIndex,optIndex,element){
+
+    if(submitted) return;
+
+    userAnswers[qIndex] = optIndex;
+
+    const options = document.querySelectorAll(`[id^="q${qIndex}_opt"]`);
+
+    options.forEach(opt=>{
+        opt.classList.remove("selected");
+    });
+
+    element.classList.add("selected");
+
+}
+
+// ===============================
+// MARK FOR REVIEW
+// ===============================
+
+function toggleMark(index,button){
+
+    markedForReview[index] = !markedForReview[index];
+
+    if(markedForReview[index]){
+        button.classList.add("marked");
+        button.innerText = "Marked For Review";
+    }else{
+        button.classList.remove("marked");
+        button.innerText = "Mark For Review";
+    }
+
+}
+
+// ===============================
+// SUBMIT QUIZ
+// ===============================
+
+function submitQuiz(){
+
+    if(submitted) return;
+
+    submitted = true;
+
+    clearInterval(timer);
+
+    let score = 0;
+
+    let correctCount = 0;
+    let wrongCount = 0;
+    let unansweredCount = 0;
+
+    questions.forEach((question,index)=>{
+
+        const userAns = userAnswers[index];
+
+        if(userAns === null){
+
+            unansweredCount++;
+
+        }
+        else if(userAns === question.answer){
+
+            score += 1;
+            correctCount++;
+
+        }
+        else{
+
+            score -= 0.25;
+            wrongCount++;
+
+        }
+
+    });
+
+    let attempted = correctCount + wrongCount;
+
+    let accuracy = attempted > 0
+    ? ((correctCount/attempted)*100).toFixed(2)
+    : 0;
+
+    document.body.innerHTML = `
+
+    <div class="container">
+
+        <div class="result-box">
+
+            <h1>Quiz Submitted ✅</h1>
+
+            <h2>Total Score: ${score.toFixed(2)}</h2>
+
+            <h3>Correct Answers: ${correctCount}</h3>
+
+            <h3>Wrong Answers: ${wrongCount}</h3>
+
+            <h3>Unanswered Questions: ${unansweredCount}</h3>
+
+            <h3>Accuracy: ${accuracy}%</h3>
+
+            <button class="review-btn" onclick="reviewAnswers()">
+            Review Answers
+            </button>
+
+            <div id="reviewSection"></div>
+
+        </div>
+
+    </div>
+
+    `;
+
+}
+
+// ===============================
+// REVIEW ANSWERS
+// ===============================
+
+function reviewAnswers(){
+
+    const reviewSection = document.getElementById("reviewSection");
+
+    let html = `<h1 style="margin-top:40px;">Review Section</h1>`;
+
+    questions.forEach((question,index)=>{
+
+        const userAns = userAnswers[index];
+
+        let status = "";
+        let marks = "";
+
+        if(userAns === null){
+
+            status = `<span class="unanswered">Unanswered</span>`;
+            marks = `0 Marks`;
+
+        }
+        else if(userAns === question.answer){
+
+            status = `<span class="correct">Correct ✅</span>`;
+            marks = `+1 Mark`;
+
+        }
+        else{
+
+            status = `<span class="wrong">Wrong ❌</span>`;
+            marks = `-0.25 Mark`;
+
+        }
+
+        html += `
+
+        <div class="review-question">
+
+            <h3>Q${index+1}. ${question.q}</h3>
+
+            <p>${status}</p>
+
+            <p><b>Marks:</b> ${marks}</p>
+
+            <p>
+            <b>Your Answer:</b>
+            ${
+                userAns === null
+                ? "Not Attempted"
+                : question.options[userAns]
+            }
+            </p>
+
+            <div class="correct-answer">
+            <b>Correct Answer:</b>
+            ${question.options[question.answer]}
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+    reviewSection.innerHTML = html;
+
+}
+
+// ===============================
+// TIMER
+// ===============================
+
+let time = 900; // 15 minutes
+
+const timer = setInterval(()=>{
+
+    let minutes = Math.floor(time/60);
+
+    let seconds = time%60;
+
+    document.getElementById("timer").innerText =
+    `Time Left: ${minutes}:${seconds<10 ? '0'+seconds : seconds}`;
+
+    time--;
+
+    if(time < 0){
+
+        clearInterval(timer);
+
+        alert("Time is up! Quiz auto-submitted.");
+
+        submitQuiz();
+
+    }
+
+},1000);
+
+// ===============================
+
+loadQuiz();
+
+</script>
+
+</body>
+</html>
